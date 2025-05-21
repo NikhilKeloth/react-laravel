@@ -13,35 +13,82 @@
 // export default App;
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 import LoadingPage from './common/LoadingPage';
 import AdminLogin from './admin/pages/Login';
-// import VendorLogin from './vendor/pages/Login';
-// import AdminDashboard from './admin/pages/Dashboard';
-// import VendorDashboard from './vendor/pages/Dashboard';
+import VendorLogin from './vendor/pages/Login';
+
 
 function App() {
   return (
     <Router>
+      {/* Temporary navigation for testing */}
+          <nav
+        style={{
+          backgroundColor: '#333',
+          padding: '12px 20px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '20px',
+        }}
+      >
+        <Link
+          to="/"
+          style={{
+            color: 'white',
+            textDecoration: 'none',
+            fontSize: '16px',
+            padding: '8px 12px',
+            borderRadius: '4px',
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = '#555')}
+          onMouseOut={(e) => (e.target.style.backgroundColor = 'transparent')}
+        >
+          Home
+        </Link>
+
+        <Link
+          to="/admin/login"
+          style={{
+            color: 'white',
+            textDecoration: 'none',
+            fontSize: '16px',
+            padding: '8px 12px',
+            borderRadius: '4px',
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = '#555')}
+          onMouseOut={(e) => (e.target.style.backgroundColor = 'transparent')}
+        >
+          Admin Login
+        </Link>
+
+        <Link
+          to="/vendor/login"
+          style={{
+            color: 'white',
+            textDecoration: 'none',
+            fontSize: '16px',
+            padding: '8px 12px',
+            borderRadius: '4px',
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = '#555')}
+          onMouseOut={(e) => (e.target.style.backgroundColor = 'transparent')}
+        >
+          Vendor Login
+        </Link>
+      </nav>
+
+
       <Routes>
-        {/* Common */}
         <Route path="/" element={<LoadingPage />} />
-    
-        {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
-        
-       
+        <Route path="/vendor/login" element={<VendorLogin />} />
       </Routes>
     </Router>
   );
 }
-//  {/* Admin Routes */}
-//         <Route path="/admin/login" element={<AdminLogin />} />
-//         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-
-//         {/* Vendor Routes */}
-//         <Route path="/vendor/login" element={<VendorLogin />} />
-//         <Route path="/vendor/dashboard" element={<VendorDashboard />} />
 
 export default App;
+
