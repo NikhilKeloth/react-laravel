@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+//import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useNameValidation } from '../hooks/useNameValidation';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Circles } from 'react-loader-spinner';
+import React, { useState, useEffect } from 'react';
+
 
 const AdminLogin = () => {
   const location = useLocation();
-  const initialView = location.state?.view || 'login';
+  const [view, setView] = useState('login');
 
-  const [view, setView] = useState(initialView);
+  useEffect(() => {
+    const viewState = location.state?.view || 'login';
+    setView(viewState);
+  }, [location.state]);
   return (
     <main id="content" role="main" className="main">
       <div className="auth-wrapper">
@@ -42,14 +47,45 @@ const AdminLogin = () => {
 
 // Login Form Component
 const LoginForm = ({ setView }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [ErrorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    alert(`Email: ${email}\nPassword: ${password}\nRemember: ${remember}`);
+    setIsLoading(true);
+   // alert(`Email: ${email}\nPassword: ${password}\nRemember: ${remember}`);
+    const payload = {     
+      email,password      
+    };
+
+    console.log(payload);
+    try {
+      const response = await axios.post('http://localhost:8000/api/admin/custom-login', {       
+        email,password       
+      });
+    setSuccessMessage('Login successfully!');
+    
+    //  setTimeout(() => {
+    //     window.location.href = '/admin/login';
+    //   }, 2000);
+     // window.location.href = '/admin/login';
+      //navigate('/admin/login');
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        const errors = error.response.data.errors;
+        const firstField = Object.keys(errors)[0];
+        const firstError = errors[firstField][0];
+        alert("Signin failed: " + firstError);
+      }
+      setErrorMessage('Login Error! Invalid UserName or Password');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -60,6 +96,21 @@ const LoginForm = ({ setView }) => {
         <h2 className="title">Admin Sign In</h2>
         <div>Welcome back, login to your panel.</div>
       </div>
+        {ErrorMessage && (
+        <div
+          style={{
+            backgroundColor: '#E9D5DB',
+            color: '#155724',
+            padding: '10px 15px',
+            marginBottom: '20px',
+            borderRadius: '5px',
+            border: '1px solid #c3e6cb',
+            textAlign: 'center',
+          }}
+        >
+          {ErrorMessage}
+        </div>
+      )}
 
       {/* Email */}
       <div className="js-form-message form-group">
@@ -144,6 +195,11 @@ const LoginForm = ({ setView }) => {
       <button type="submit" className="btn btn-lg btn-block btn--primary mt-xxl-3">
         Login
       </button>
+      {isLoading && (
+        <div className="text-center mt-3">
+          <Circles height="80" width="80" color="#0d6efd" ariaLabel="loading" />
+        </div>
+      )}
 
       <div className="text-center mt-4">
         Don’t have an account?{' '}
@@ -195,7 +251,7 @@ const SignUpForm = ({ setView }) => {
       });
      setSuccessMessage('Account created successfully! You can now login.');
      setTimeout(() => {
-        window.location.href = '/admin/login';
+        navigate('/admin/login', { state: { view: 'login' } });
       }, 2000);
      // window.location.href = '/admin/login';
       //navigate('/admin/login');
