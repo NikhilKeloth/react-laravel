@@ -5,7 +5,18 @@ const LoadingPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', margin: 0 }}>
+    <div  style={{
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    margin: 0,
+    backgroundImage: 'url("./images/new.jpg")',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center',
+    backgroundRepeat: 'no-repeat',
+  }}>
       <div>
         <h1 style={{ textAlign: 'center' }}>WELCOME!</h1>
       </div>
@@ -47,6 +58,22 @@ const LoadingPage = () => {
         >
           Vendor Login
         </button>
+        <div style={{ marginTop: '20px',display: 'flex', justifyContent: 'center' }}>
+          <button
+           onClick={() => navigate('/admin/login', { state: { view: 'signup' } })}
+          style={{
+            padding: '10px 20px',
+            margin: '5px',
+            cursor: 'pointer',
+            backgroundColor: '#934578',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            transition: 'background-color 0.3s',
+          }}
+          >Sign up</button>
+          
+        </div>
       </div>
     </div>
   );
