@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-
+import { useNameValidation } from '../hooks/useNameValidation';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Circles } from 'react-loader-spinner';
 
 const AdminLogin = () => {
   const location = useLocation();
@@ -160,9 +163,52 @@ const LoginForm = ({ setView }) => {
 
 // SignUp Form Component
 const SignUpForm = ({ setView }) => {
-  const handleSignup = (e) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const {
+    name, error, isValid, validateName,
+    email, emailError, isEmailValid, validateEmail,
+    password, passwordError, isPasswordValid, validatePassword,
+    confirmPassword, confirmPasswordError, isConfirmValid, validateConfirmPassword
+  } = useNameValidation();
+  const navigate = useNavigate();
+
+  const handleSignup = async (e) => {
     e.preventDefault();
-    alert('Signup form submitted');
+    setIsLoading(true);
+    setSuccessMessage(''); 
+
+    const payload = {
+      name,
+      email,
+      password,
+      password_confirmation: confirmPassword,
+    };
+
+    console.log(payload);
+    try {
+      const response = await axios.post('http://localhost:8000/api/admin/custom-register', {
+        name,
+        email,
+        password,
+        password_confirmation: confirmPassword,
+      });
+     setSuccessMessage('Account created successfully! You can now login.');
+     setTimeout(() => {
+        window.location.href = '/admin/login';
+      }, 2000);
+     // window.location.href = '/admin/login';
+      //navigate('/admin/login');
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        const errors = error.response.data.errors;
+        const firstField = Object.keys(errors)[0];
+        const firstError = errors[firstField][0];
+        alert("Signup failed: " + firstError);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -171,24 +217,82 @@ const SignUpForm = ({ setView }) => {
         <h2 className="title">Admin Sign Up</h2>
         <div>Create your new account.</div>
       </div>
+       {successMessage && (
+        <div
+          style={{
+            backgroundColor: '#d4edda',
+            color: '#155724',
+            padding: '10px 15px',
+            marginBottom: '20px',
+            borderRadius: '5px',
+            border: '1px solid #c3e6cb',
+            textAlign: 'center',
+          }}
+        >
+          {successMessage}
+        </div>
+      )}
 
-      {/* Placeholder for Name, Email, Password, Confirm Password */}
       <div className="form-group">
-        <input className="form-control form-control-lg" placeholder="Name" required />
-      </div>
-      <div className="form-group">
-        <input type="email" className="form-control form-control-lg" placeholder="Email" required />
-      </div>
-      <div className="form-group">
-        <input type="password" className="form-control form-control-lg" placeholder="Password" required />
-      </div>
-      <div className="form-group">
-        <input type="password" className="form-control form-control-lg" placeholder="Confirm Password" required />
+        <input
+          placeholder="Name"
+          required
+          type="text"
+          id="name"
+          value={name}
+          onChange={(e) => validateName(e.target.value)}
+          className={error ? 'input-error form-control form-control-lg' : 'form-control form-control-lg'}
+        />
+        {error && <div style={{ color: 'red', marginTop: '4px', fontSize: '0.9rem' }}>{error}</div>}
       </div>
 
-      <button type="submit" className="btn btn-lg btn-block btn--primary mt-xxl-3">
+      <input
+        placeholder="Email"
+        required
+        type="email"
+        value={email}
+        onChange={(e) => validateEmail(e.target.value)}
+        className={emailError ? 'input-error form-control form-control-lg' : 'form-control form-control-lg'}
+      />
+      {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
+
+      <div className="form-group">
+        <input
+          type="password"
+          placeholder="Password"
+          required
+          value={password}
+          onChange={(e) => validatePassword(e.target.value)}
+          className={passwordError ? 'input-error form-control form-control-lg' : 'form-control form-control-lg'}
+        />
+        {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
+      </div>
+
+      <div className="form-group">
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          required
+          value={confirmPassword}
+          onChange={(e) => validateConfirmPassword(e.target.value)}
+          className={confirmPasswordError ? 'input-error form-control form-control-lg' : 'form-control form-control-lg'}
+        />
+        {confirmPasswordError && <div style={{ color: 'red' }}>{confirmPasswordError}</div>}
+      </div>
+
+      <button
+        type="submit"
+        disabled={!isValid || !isEmailValid || !isPasswordValid || !isConfirmValid || isLoading}
+        className="btn btn-lg btn-block btn--primary mt-xxl-3"
+      >
         Register
       </button>
+
+      {isLoading && (
+        <div className="text-center mt-3">
+          <Circles height="80" width="80" color="#0d6efd" ariaLabel="loading" />
+        </div>
+      )}
 
       <div className="text-center mt-4">
         Already have an account?{' '}
