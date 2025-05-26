@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator; // ✅ This is required
 
 
+
 class CustomRegisterController extends Controller
 {
     //
@@ -15,7 +16,7 @@ public function register(Request $request)
     {
         // Validate incoming request
 
-       // return($request->all());
+    // return($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:2|max:255',
             'email' => 'required|string|email|max:255|unique:users',
