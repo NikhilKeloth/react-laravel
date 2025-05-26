@@ -301,6 +301,7 @@ const SignUpForm = ({ setView }) => {
         />
         {error && <div style={{ color: 'red', marginTop: '4px', fontSize: '0.9rem' }}>{error}</div>}
       </div>
+      <div className="form-group">
 
       <input
         placeholder="Email"
@@ -311,7 +312,7 @@ const SignUpForm = ({ setView }) => {
         className={emailError ? 'input-error form-control form-control-lg' : 'form-control form-control-lg'}
       />
       {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
-
+      </div>
       <div className="form-group">
         <input
           type="password"
