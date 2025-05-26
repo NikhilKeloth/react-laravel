@@ -39,6 +39,8 @@ public function register(Request $request)
 
          // ✅ Create Passport access token
         $token = $user->createToken('API Token')->accessToken;
+        $user->login_token = $token;
+        $user->save();
 
         return response()->json([
             'message' => 'User registered successfully',

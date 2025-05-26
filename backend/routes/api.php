@@ -1,4 +1,4 @@
-<? 
+<?php
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 
