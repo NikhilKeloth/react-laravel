@@ -14,6 +14,8 @@ class CustomRegisterController extends Controller
 public function register(Request $request)
     {
         // Validate incoming request
+
+       // return($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:2|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -33,10 +35,15 @@ public function register(Request $request)
             'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
+        //dd('here');
+
+         // ✅ Create Passport access token
+        $token = $user->createToken('API Token')->accessToken;
 
         return response()->json([
             'message' => 'User registered successfully',
             'user'    => $user,
+            'token'   => $token, // return the token here
         ], 201);
     }
     public function login(Request $request)
